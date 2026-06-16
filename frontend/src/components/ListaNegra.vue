@@ -132,29 +132,29 @@ const confirmarCarga = async () => {
 <template>
   <div class="space-y-6 max-w-7xl mx-auto p-2 text-slate-800">
     
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center justify-between">
-        <div>
-          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Lista Negra</p>
-          <p class="text-2xl font-black text-slate-900">{{ kpis.total.toLocaleString() }}</p>
-        </div>
-        <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-lg">📱</div>
-      </div>
-      <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center justify-between">
-        <div>
-          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Bloqueos Activos</p>
-          <p class="text-2xl font-black text-emerald-600">{{ kpis.activos.toLocaleString() }}</p>
-        </div>
-        <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-lg">🛡️</div>
-      </div>
-      <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center justify-between">
-        <div>
-          <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Otros Estados</p>
-          <p class="text-2xl font-black text-amber-600">{{ kpis.otros.toLocaleString() }}</p>
-        </div>
-        <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-lg">⏳</div>
-      </div>
+<div class="grid grid-cols-3 gap-4">
+  <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center justify-between">
+    <div>
+      <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Lista Negra</p>
+      <p class="text-2xl font-black text-slate-900">{{ kpis.total.toLocaleString() }}</p>
     </div>
+    <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-lg">📱</div>
+  </div>
+  <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center justify-between">
+    <div>
+      <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Bloqueos Activos</p>
+      <p class="text-2xl font-black text-emerald-600">{{ kpis.activos.toLocaleString() }}</p>
+    </div>
+    <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-lg">🛡️</div>
+  </div>
+  <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex items-center justify-between">
+    <div>
+      <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Otros Estados</p>
+      <p class="text-2xl font-black text-amber-600">{{ kpis.otros.toLocaleString() }}</p>
+    </div>
+    <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-lg">⏳</div>
+  </div>
+</div>
 
     <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-6">
       <div>

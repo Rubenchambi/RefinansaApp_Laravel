@@ -13,19 +13,14 @@ class ListaNegraController extends Controller
     private $tabla = 'Actualizar_Lista_negra';
     // Usamos la conexión por defecto registrada para 'Busqueda_Search'
     private $dbConnection = 'sqlsrv'; 
-
-    /**
-     * NUEVO: Obtener las estadísticas globales y los registros actuales para el monitor web
-     * Conecta directo con el template dinámico de Vue 3
-     */
     public function index(Request $request)
     {
         try {
             $busqueda = $request->query('search', '');
             
             // 1. Calcular KPIs principales en caliente desde SQL Server
-            $totalRegistros = DB::connection($this->dbConnection)->table($this->tabla)->count();
-            
+            $totalRegistros = DB::connection($this->dbConnection)->table($this->tabla)
+                ->count();
             $activos = DB::connection($this->dbConnection)->table($this->tabla)
                 ->where('estado', 'LIKE', 'ACT%')
                 ->count();

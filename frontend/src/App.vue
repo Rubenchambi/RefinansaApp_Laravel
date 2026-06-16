@@ -71,7 +71,7 @@ const modulosFiltrados = computed(() => {
         :class="[
           esHorizontal 
             ? 'w-full flex flex-row flex-wrap gap-2 border-b border-slate-200 pb-4 mb-2' 
-            : 'w-64 flex flex-col gap-2 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm sticky top-24 self-start'
+            : 'w-64 flex flex-col gap-2 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm sticky top-2 self-start'
         ]" 
         class="transition-all duration-300"
       >
