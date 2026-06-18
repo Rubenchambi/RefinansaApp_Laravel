@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ListaNegraController;
 use App\Http\Controllers\Api\ActualizarRequerimientosController;
+use App\Http\Controllers\Api\SubirAsignacionesController;
 
 // 🔒 Ruta por defecto de Laravel
 Route::get('/user', function (Request $request) {
@@ -27,3 +28,8 @@ Route::post('/actualizar-requerimientos/cargar', [ActualizarRequerimientosContro
 Route::post('/actualizar-requerimientos/administrada', [ActualizarRequerimientosController::class, 'procesarCarga']);
 Route::post('/actualizar-requerimientos/hipotecario', [ActualizarRequerimientosController::class, 'procesarCarga']);
 Route::post('/actualizar-requerimientos/convenio', [ActualizarRequerimientosController::class, 'procesarCarga']);
+
+// Endpoint para el proceso de previsualización y carga
+Route::post('/subir-asignacion', [SubirAsignacionesController::class, 'subirAsignacion']);
+// Endpoint del monitor para refrescar la tabla dinámica en vivo
+Route::get('/subir-asignacion/monitor', [SubirAsignacionesController::class, 'monitorAsignacion']);

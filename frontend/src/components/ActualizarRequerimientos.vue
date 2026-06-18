@@ -215,6 +215,8 @@ const cargarDirecto = async (endpoint) => {
       formData.append('archivo', archivo.value)
       formData.append('mes_asignacion', mesSeleccionado.value)
       formData.append('anio_asignacion', anioSeleccionado.value)
+      // ✨ CORRECCIÓN CRÍTICA: Indicamos al backend que ejecute de verdad la carga
+      formData.append('confirmar', 'S') 
 
       res = await fetch(`http://127.0.0.1:8000/api/actualizar-requerimientos/${endpoint}`, {
         method: 'POST',
@@ -227,7 +229,9 @@ const cargarDirecto = async (endpoint) => {
         body: JSON.stringify({
           ruta_excel: rutaManual.value,
           mes_asignacion: mesSeleccionado.value,
-          anio_asignacion: anioSeleccionado.value
+          anio_asignacion: anioSeleccionado.value,
+          // ✨ CORRECCIÓN CRÍTICA: Indicamos al backend que ejecute de verdad la carga
+          confirmar: 'S' 
         })
       })
     }

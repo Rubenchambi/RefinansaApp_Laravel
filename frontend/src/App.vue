@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 // 1. 📦 IMPORTA TU COMPONENTE AQUÍ (Ajusta la ruta según tus carpetas)
 import ListaNegra from './components/ListaNegra.vue'
 import ActualizarRequerimientos from './components/ActualizarRequerimientos.vue'
+import SubirAsignaciones from './components/SubirAsignaciones.vue'
 
 // Estados de control impecables
 const esHorizontal = ref(false)
@@ -14,7 +15,7 @@ const modulos = [
   { id: 'lista_negra', nombre: '📱 Lista Negra Teléfonos' },
   { id: 'metropolitana', nombre: '🏢 Metropolitana DXD' },
   { id: 'actualizar_requerimientos', nombre: '⚙️ Requerimientos' },
-  { id: 'predictivos', nombre: '📊 Predictivos Alfin' },
+  { id: 'subir_asignaciones', nombre: '📊 Asignaciones de Carteras' },
   { id: 'Metas-carteras', nombre: '🎯 Metas de Carteras' }
 ]
 
@@ -111,6 +112,9 @@ const modulosFiltrados = computed(() => {
           </div>
           <div v-else-if="actual === 'actualizar_requerimientos'">
             <ActualizarRequerimientos />
+          </div>
+                    <div v-else-if="actual === 'subir_asignaciones'">
+            <SubirAsignaciones />
           </div>
 
           <div v-else class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl p-12 text-center text-slate-500">

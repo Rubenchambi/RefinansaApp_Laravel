@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log; // Aseguramos el Log que usas en el catch
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Exception;
 
@@ -31,7 +31,7 @@ class ActualizarRequerimientosController extends Controller
         'FECHA_PAGOS' => 'string'
     ];
 
-        public function monitor(Request $request)
+    public function monitor(Request $request)
     {
         try {
             $search = $request->query('search', '');
@@ -68,7 +68,7 @@ class ActualizarRequerimientosController extends Controller
             ]);
 
         } catch (Exception $e) {
-              Log::error('MONITOR ERROR: ' . $e->getMessage());
+            Log::error('MONITOR ERROR: ' . $e->getMessage());
             return response()->json([
                 'error' => 'Error al leer monitor SQL: ' . $e->getMessage()
             ], 500);
@@ -162,11 +162,10 @@ class ActualizarRequerimientosController extends Controller
             // =========================================
             // CARGA DE DATOS
             // =========================================
-           DB::connection($this->dbConnection)->statement("DELETE FROM [{$this->tabla}]");
+            DB::connection($this->dbConnection)->statement("DELETE FROM [{$this->tabla}]");
 
-
-            // Insert en chunks de 5000 (equivalente a chunksize=5000 de pandas)
-            $chunks = array_chunk($datos, 5000);
+            // ✨ CORRECCIÓN CRÍTICA: Cambiamos de 5000 a 200 para respetar el límite de 2100 parámetros de SQL Server
+            $chunks = array_chunk($datos, 200);
             $totalInsertados = 0;
 
             foreach ($chunks as $chunk) {
@@ -223,7 +222,7 @@ class ActualizarRequerimientosController extends Controller
 
         } catch (Exception $e) {
             return response()->json([
-                'error' => 'Error al leer monitor SQL: ' . $e->getMessage()
+                'error' => 'Error en el proceso: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -231,7 +230,6 @@ class ActualizarRequerimientosController extends Controller
     /**
      * =========================================
      * LEER EXCEL CON TIPOS DE DATOS
-     * Equivalente a pd.read_excel con dtype
      * =========================================
      */
     private function leerExcel(string $ruta): array
@@ -307,7 +305,6 @@ class ActualizarRequerimientosController extends Controller
     /**
      * =========================================
      * CAST DE VALORES SEGÚN TIPO
-     * Equivalente al dtype de pandas
      * =========================================
      */
     private function castValor($valor, string $tipo)

@@ -22,7 +22,7 @@ return [
         'prefix_indexes' => true,
     ],
 
-    // Conexión 2: Asignaciones
+    /* Conexión 2: Asignaciones
     'asignaciones' => [
         'driver' => 'sqlsrv',
         'host' => env('ASIG_DB_HOST', '192.168.1.247'),
@@ -32,7 +32,7 @@ return [
         'password' => env('ASIG_DB_PASSWORD', ''),
         'charset' => 'utf8',
         'prefix' => '',
-    ],
+    ],*/
 
     // Conexión 3: Actualizaciones
     'actualizacion' => [
@@ -46,6 +46,8 @@ return [
         'prefix' => '',
     ],
 
+    
+
     // Conexión 4: Metas
     'metas' => [
         'driver' => 'sqlsrv',
@@ -54,6 +56,18 @@ return [
         'database' => env('MET_DB_DATABASE', ''),
         'username' => env('MET_DB_USERNAME', ''),
         'password' => env('MET_DB_PASSWORD', ''),
+        'charset' => 'utf8',
+        'prefix' => '',
+    ],
+
+        // Conexión 5: asignaciones_origen
+    'asignaciones_origen' => [
+        'driver' => 'sqlsrv',
+        'host' => env('ORG_DB_HOST', '192.168.1.247'),
+        'port' => env('ORG_DB_PORT', '1433'),
+        'database' => env('ORG_DB_DATABASE', ''),
+        'username' => env('ORG_DB_USERNAME', ''),
+        'password' => env('ORG_DB_PASSWORD', ''),
         'charset' => 'utf8',
         'prefix' => '',
     ],
