@@ -1,7 +1,8 @@
 <script setup>
 import { ref, computed } from 'vue'
 // 1. 📦 IMPORTA TU COMPONENTE AQUÍ (Ajusta la ruta según tus carpetas)
-import ListaNegra from './components/ListaNegra.vue' 
+import ListaNegra from './components/ListaNegra.vue'
+import ActualizarRequerimientos from './components/ActualizarRequerimientos.vue'
 
 // Estados de control impecables
 const esHorizontal = ref(false)
@@ -12,7 +13,7 @@ const busqueda = ref('')
 const modulos = [
   { id: 'lista_negra', nombre: '📱 Lista Negra Teléfonos' },
   { id: 'metropolitana', nombre: '🏢 Metropolitana DXD' },
-  { id: 'requerimientos', nombre: '⚙️ Requerimientos' },
+  { id: 'actualizar_requerimientos', nombre: '⚙️ Requerimientos' },
   { id: 'predictivos', nombre: '📊 Predictivos Alfin' },
   { id: 'Metas-carteras', nombre: '🎯 Metas de Carteras' }
 ]
@@ -107,6 +108,9 @@ const modulosFiltrados = computed(() => {
 
           <div v-if="actual === 'lista_negra'">
             <ListaNegra />
+          </div>
+          <div v-else-if="actual === 'actualizar_requerimientos'">
+            <ActualizarRequerimientos />
           </div>
 
           <div v-else class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl p-12 text-center text-slate-500">

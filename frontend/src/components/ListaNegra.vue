@@ -8,6 +8,7 @@ const preview = ref(null)
 const resumenFinal = ref(null)
 const errorMsg = ref(null)
 const rutaManual = ref('') // 📁 Para describir o pegar rutas directas de red/servidor
+const mostrarModal = ref(false) // 🆕 Control del popup/modal
 
 // Estados del Monitor del Sistema (Datos Existentes)
 const kpis = ref({ total: 0, activos: 0, otros: 0 })
@@ -63,11 +64,22 @@ const resetAlertas = () => {
   preview.value = null
   resumenFinal.value = null
   errorMsg.value = null
+  mostrarModal.value = false // 🆕 Cierra el modal al resetear
 }
 
 const removerArchivo = () => {
   archivo.value = null
   resetAlertas()
+}
+
+// 🆕 Función para abrir el modal
+const abrirModal = () => {
+  mostrarModal.value = true
+}
+
+// 🆕 Función para cerrar el modal
+const cerrarModal = () => {
+  mostrarModal.value = false
 }
 
 // ==========================================
@@ -94,6 +106,8 @@ const subirParaPrevisualizar = async () => {
     const data = await res.json()
     if (!res.ok) throw new Error(data.error || 'Error al previsualizar.')
     preview.value = data
+    // 🆕 Después de cargar la previsualización, abrimos el modal
+    abrirModal()
   } catch (err) {
     errorMsg.value = err.message
   } finally {
@@ -119,6 +133,7 @@ const confirmarCarga = async () => {
     preview.value = null
     archivo.value = null
     rutaManual.value = ''
+    mostrarModal.value = false // 🆕 Cierra el modal después de confirmar
     
     cargarDatosMonitor()
   } catch (err) {
@@ -221,66 +236,73 @@ const confirmarCarga = async () => {
       </div>
     </div>
 
-    <div v-if="preview" class="border border-slate-200 rounded-2xl p-5 bg-white space-y-4 shadow-sm">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-        <div>
-          <h3 class="text-xs font-black text-slate-900 uppercase tracking-wider">👁️ Previsualización de Datos (Muestra de 5 filas)</h3>
-          <p class="text-[10px] text-slate-400 font-medium mt-0.5">Valores recuperados del almacenamiento temporal</p>
+    <!-- 🆕 MODAL / POPUP DE PREVISUALIZACIÓN -->
+    <div v-if="mostrarModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" @click.self="cerrarModal">
+      <div class="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 p-6 space-y-4">
+        <!-- Encabezado del modal -->
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+          <div>
+            <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider">👁️ Previsualización de Datos (Muestra de 5 filas)</h3>
+            <p class="text-[10px] text-slate-400 font-medium mt-0.5">Valores recuperados del almacenamiento temporal</p>
+          </div>
+          <button @click="cerrarModal" class="text-slate-400 hover:text-slate-600 transition-colors text-xl font-bold p-1 hover:bg-slate-100 rounded-lg w-8 h-8 flex items-center justify-center">
+            ✕
+          </button>
         </div>
-        <span class="text-[10px] font-extrabold bg-amber-50 text-amber-700 border border-amber-100 px-2 py-0.5 rounded-md">Confirmación Requerida</span>
-      </div>
 
-      <div class="grid grid-cols-3 gap-3 text-center text-[11px] font-bold">
-        <div class="bg-slate-50 border border-slate-100 p-2.5 rounded-xl">
-          <span class="text-slate-400 block">Filas en Excel</span>
-          <span class="text-sm text-slate-800 font-black block mt-0.5">{{ preview.total_filas_excel }}</span>
+        <!-- Contenido del modal (igual que antes) -->
+        <div class="grid grid-cols-3 gap-3 text-center text-[11px] font-bold">
+          <div class="bg-slate-50 border border-slate-100 p-2.5 rounded-xl">
+            <span class="text-slate-400 block">Filas en Excel</span>
+            <span class="text-sm text-slate-800 font-black block mt-0.5">{{ preview?.total_filas_excel }}</span>
+          </div>
+          <div class="bg-orange-50 border border-orange-100 p-2.5 rounded-xl">
+            <span class="text-orange-600 block">Duplicados Internos</span>
+            <span class="text-sm text-orange-700 font-black block mt-0.5">{{ preview?.duplicados_excel }}</span>
+          </div>
+          <div class="bg-slate-50 border border-slate-100 p-2.5 rounded-xl">
+            <span class="text-slate-400 block">Antes en SQL Server</span>
+            <span class="text-sm text-slate-800 font-black block mt-0.5">{{ preview?.registros_antes_sql }}</span>
+          </div>
         </div>
-        <div class="bg-orange-50 border border-orange-100 p-2.5 rounded-xl">
-          <span class="text-orange-600 block">Duplicados Internos</span>
-          <span class="text-sm text-orange-700 font-black block mt-0.5">{{ preview.duplicados_excel }}</span>
+
+        <div class="overflow-x-auto border border-slate-100 rounded-xl">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-100 font-bold text-slate-500">
+                <th class="p-2.5">Doc</th>
+                <th class="p-2.5">Teléfono</th>
+                <th class="p-2.5">Obs</th>
+                <th class="p-2.5">Estado original</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(row, idx) in preview?.primeras_filas" :key="idx" class="border-b border-slate-50 font-medium text-slate-600">
+                <td class="p-2.5 font-mono font-bold text-slate-900">{{ row.nro_documento || 'NULL' }}</td>
+                <td class="p-2.5 font-mono text-indigo-600 font-bold">{{ row.telefono || 'NULL' }}</td>
+                <td class="p-2.5 max-w-xs truncate text-slate-400">{{ row.observaciones || 'NULL' }}</td>
+                <td class="p-2.5">
+                  <span class="bg-slate-100 px-1.5 py-0.5 rounded text-[10px] font-bold">{{ row.estado || 'NULL' }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <div class="bg-slate-50 border border-slate-100 p-2.5 rounded-xl">
-          <span class="text-slate-400 block">Antes en SQL Server</span>
-          <span class="text-sm text-slate-800 font-black block mt-0.5">{{ preview.registros_antes_sql }}</span>
+
+        <div v-if="preview?.duplicados_excel > 0" class="bg-amber-50 border border-amber-100 text-amber-800 text-[11px] p-3 rounded-xl font-semibold">
+          ⚠️ ADVERTENCIA: El archivo contiene {{ preview.duplicados_excel }} filas duplicadas internamente.
         </div>
-      </div>
 
-      <div class="overflow-x-auto border border-slate-100 rounded-xl">
-        <table class="w-full text-left border-collapse text-xs">
-          <thead>
-            <tr class="bg-slate-50 border-b border-slate-100 font-bold text-slate-500">
-              <th class="p-2.5">Doc</th>
-              <th class="p-2.5">Teléfono</th>
-              <th class="p-2.5">Obs</th>
-              <th class="p-2.5">Estado original</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(row, idx) in preview.primeras_filas" :key="idx" class="border-b border-slate-50 font-medium text-slate-600">
-              <td class="p-2.5 font-mono font-bold text-slate-900">{{ row.nro_documento || 'NULL' }}</td>
-              <td class="p-2.5 font-mono text-indigo-600 font-bold">{{ row.telefono || 'NULL' }}</td>
-              <td class="p-2.5 max-w-xs truncate text-slate-400">{{ row.observaciones || 'NULL' }}</td>
-              <td class="p-2.5">
-                <span class="bg-slate-100 px-1.5 py-0.5 rounded text-[10px] font-bold">{{ row.estado || 'NULL' }}</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div v-if="preview.duplicados_excel > 0" class="bg-amber-50 border border-amber-100 text-amber-800 text-[11px] p-3 rounded-xl font-semibold">
-        ⚠️ ADVERTENCIA: El archivo contiene {{ preview.duplicados_excel }} filas duplicadas internamente.
-      </div>
-
-      <div class="flex justify-between items-center pt-2">
-        <button @click="resetAlertas" class="text-slate-400 text-xs font-bold hover:text-slate-600">Cancelar Operación</button>
-        <button 
-          @click="confirmarCarga" 
-          :disabled="cargando" 
-          class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl text-xs font-extrabold tracking-wide shadow-md shadow-emerald-100"
-        >
-          {{ cargando ? 'Insertando en SQL Server...' : '🚀 Confirmar e Insertar en SQL Server' }}
-        </button>
+        <div class="flex justify-between items-center pt-4 border-t border-slate-100">
+          <button @click="cerrarModal" class="text-slate-400 text-xs font-bold hover:text-slate-600">Cancelar Operación</button>
+          <button 
+            @click="confirmarCarga" 
+            :disabled="cargando" 
+            class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl text-xs font-extrabold tracking-wide shadow-md shadow-emerald-100"
+          >
+            {{ cargando ? 'Insertando en SQL Server...' : '🚀 Confirmar e Insertar en SQL Server' }}
+          </button>
+        </div>
       </div>
     </div>
 

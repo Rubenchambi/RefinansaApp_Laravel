@@ -13,18 +13,16 @@ class ListaNegraController extends Controller
     private $tabla = 'Actualizar_Lista_negra';
     // Usamos la conexión por defecto registrada para 'Busqueda_Search'
     private $dbConnection = 'sqlsrv'; 
+
     public function index(Request $request)
     {
         try {
             $busqueda = $request->query('search', '');
-            
-            // 1. Calcular KPIs principales en caliente desde SQL Server
             $totalRegistros = DB::connection($this->dbConnection)->table($this->tabla)
                 ->count();
             $activos = DB::connection($this->dbConnection)->table($this->tabla)
                 ->where('estado', 'LIKE', 'ACT%')
                 ->count();
-
             // 2. Traer registros paginados con filtro de búsqueda por DNI o Teléfono
             $query = DB::connection($this->dbConnection)->table($this->tabla);
             
@@ -51,9 +49,6 @@ class ListaNegraController extends Controller
         }
     }
 
-    /**
-     * FASE 1: Procesar Excel y devolver la Previsualización al Frontend
-     */
     public function previsualizar(Request $request)
     {
         $request->validate([
@@ -70,7 +65,6 @@ class ListaNegraController extends Controller
                 return response()->json(['error' => 'El archivo Excel está vacío.'], 422);
             }
 
-            // Mapear cabeceras a índices (Fila 1)
             $headers = array_map('strtolower', array_filter($rows[1]));
             
             $dataPreview = [];
