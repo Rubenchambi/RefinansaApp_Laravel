@@ -637,5 +637,27 @@ const cargarDirecto = async (endpoint) => {
       </div>
     </div>
 
+    <!-- ========================================================================= -->
+    <!-- 🔄 OVERLAY DE CARGA: CÍRCULO PREMIUM DE DOBLE SEGMENTO                    -->
+    <!-- ========================================================================= -->
+    <div 
+          v-if="cargando" 
+          class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-slate-900/70 backdrop-blur-sm"
+        >
+          <div class="bg-white px-12 py-12 rounded-2xl shadow-2xl border border-slate-100 flex flex-col items-center max-w-lg w-full text-center space-y-8">
+            
+            <div class="relative flex items-center justify-center" style="width: 128px; height: 128px;">
+              <div class="absolute inset-0 animate-spin rounded-full border-[6px] border-slate-100 border-t-indigo-600 border-b-indigo-600"></div>
+            </div>
+            
+            <div class="space-y-2.5">
+              <h4 class="text-base font-black text-slate-900 uppercase tracking-wider">Procesando Información</h4>
+              <p class="text-xs text-slate-500 font-semibold leading-relaxed px-4">
+                Actualizando/ Cargando data. Por favor, no cierres esta ventana.
+              </p>
+            </div>
+          </div>
+    </div>
+
   </div>
 </template>

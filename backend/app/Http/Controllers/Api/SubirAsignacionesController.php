@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Schema\Blueprint;
 use App\Imports\AsignacionDinamicaImport;
 use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Concerns\WithHeadingRow; // <-- Añadido para habilitar cabeceras legibles
+
+// 💡 Mini helper para forzar la lectura con cabeceras reales en el ToArray sin alterar tu código
+class ArrancadorCabeceras implements WithHeadingRow {}
 
 class SubirAsignacionesController extends Controller
 {
@@ -101,7 +105,8 @@ class SubirAsignacionesController extends Controller
         }
 
         try {
-            $reader = Excel::toArray(new \stdClass, $pathTarget);
+            // 🛠️ FIX AQUÍ: Cambiamos new \stdClass por nuestro inicializador para obtener las llaves reales de tu Excel
+            $reader = Excel::toArray(new ArrancadorCabeceras, $pathTarget);
             if (empty($reader) || empty($reader[0])) {
                 return response()->json(['error' => 'El archivo Excel está vacío.'], 400);
             }
@@ -128,13 +133,19 @@ class SubirAsignacionesController extends Controller
             $dbConnection->dropIfExists($nombreTabla);
             
             $dbConnection->create($nombreTabla, function (Blueprint $table) use ($cabeceras, $columnasString) {
+                // Agregar ID autoincremental automático para control interno
+                $table->id();
+
                 foreach ($cabeceras as $columna) {
                     if (empty($columna)) continue;
 
+                    // Sanitizamos el nombre de la columna para SQL Server (quitar espacios o caracteres raros)
+                    $columnaLimpia = strtolower(preg_replace('/[^A-Za-z0-9_]/', '_', trim($columna)));
+
                     if (in_array($columna, $columnasString)) {
-                        $table->string($columna, 255)->nullable(); 
+                        $table->string($columnaLimpia, 255)->nullable(); 
                     } else {
-                        $table->text($columna)->nullable(); 
+                        $table->text($columnaLimpia)->nullable(); 
                     }
                 }
             });
@@ -159,32 +170,29 @@ class SubirAsignacionesController extends Controller
     }
 
     /**
-     * 🛠️ Helper privado para centralizar la resolución de nombres de tabla
+     * 🛠️ Helper privado optimizado y sanitizado para SQL Server
      */
-/**
- * 🛠️ Helper privado optimizado y sanitizado para SQL Server
- */
-private function resolverNombreTabla(Request $request)
-{
-    // Recuperamos el input limpiando espacios laterales
-    $nombreTablaManual = trim($request->input('nombre_tabla_personalizado', ''));
+    private function resolverNombreTabla(Request $request)
+    {
+        // Recuperamos el input limpiando espacios laterales
+        $nombreTablaManual = trim($request->input('nombre_tabla_personalizado', ''));
 
-    // Validamos que NO esté vacío y que NO sea el texto literal "null" o "undefined"
-    if (!empty($nombreTablaManual) && strtolower($nombreTablaManual) !== 'null' && strtolower($nombreTablaManual) !== 'undefined') {
-        // Sanitizamos: dejamos solo letras, números y guiones bajos
-        $sanitizada = preg_replace('/[^A-Za-z0-9_]/', '', $nombreTablaManual);
-        return $sanitizada ?: "Asignacion_Temporal_Manual";
+        // Validamos que NO esté vacío y que NO sea el texto literal "null" o "undefined"
+        if (!empty($nombreTablaManual) && strtolower($nombreTablaManual) !== 'null' && strtolower($nombreTablaManual) !== 'undefined') {
+            // Sanitizamos: dejamos solo letras, números y guiones bajos
+            $sanitizada = preg_replace('/[^A-Za-z0-9_]/', '', $nombreTablaManual);
+            return $sanitizada ?: "Asignacion_Temporal_Manual";
+        }
+
+        // Si viene vacío, armamos el nombre por defecto con los combos
+        $cartera = preg_replace('/[^A-Za-z0-9]/', '', trim($request->input('cartera', '')));
+        $mes = preg_replace('/[^A-Za-z0-9]/', '', trim($request->input('mes_abreviado', '')));
+        $anio = preg_replace('/[^A-Za-z0-9]/', '', trim($request->input('anio_dos_digitos', '')));
+
+        if (!empty($cartera) && !empty($mes) && !empty($anio)) {
+            return "Asignacion{$cartera}_{$mes}{$anio}";
+        }
+
+        return "Asignacion_Temporal_Carga";
     }
-
-    // Si viene vacío, armamos el nombre por defecto con los combos
-    $cartera = preg_replace('/[^A-Za-z0-9]/', '', trim($request->input('cartera', '')));
-    $mes = preg_replace('/[^A-Za-z0-9]/', '', trim($request->input('mes_abreviado', '')));
-    $anio = preg_replace('/[^A-Za-z0-9]/', '', trim($request->input('anio_dos_digitos', '')));
-
-    if (!empty($cartera) && !empty($mes) && !empty($anio)) {
-        return "Asignacion{$cartera}_{$mes}{$anio}";
-    }
-
-    return "Asignacion_Temporal_Carga";
-}
 }
