@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ListaNegraController;
 use App\Http\Controllers\Api\ActualizarRequerimientosController;
 use App\Http\Controllers\Api\SubirAsignacionesController;
+use App\Http\Controllers\Api\GenerarPredictivoController;
 
 // 🔒 Ruta por defecto de Laravel
 Route::get('/user', function (Request $request) {
@@ -33,3 +34,10 @@ Route::post('/actualizar-requerimientos/convenio', [ActualizarRequerimientosCont
 Route::post('/subir-asignacion', [SubirAsignacionesController::class, 'subirAsignacion']);
 // Endpoint del monitor para refrescar la tabla dinámica en vivo
 Route::get('/subir-asignacion/monitor', [SubirAsignacionesController::class, 'monitorAsignacion']);
+
+Route::prefix('predictivo')->group(function () {
+    Route::post('/cargar-dnis', [GenerarPredictivoController::class, 'cargarDnis']);
+    Route::post('/generar-devalix', [GenerarPredictivoController::class, 'generarDevalix']);
+    Route::post('/generar-uncontac', [GenerarPredictivoController::class, 'generarUncontac']);
+    Route::post('/generar-excel', [GenerarPredictivoController::class, 'generarExcel']);
+});

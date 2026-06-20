@@ -72,6 +72,18 @@ return [
         'prefix' => '',
     ],
 
+            // Conexión 6: Matr_telefonos
+    'Matr_telefonos' => [
+        'driver' => 'sqlsrv',
+        'host' => env('TELF_DB_HOST', '192.168.1.247'),
+        'port' => env('TELF_DB_PORT', '1433'),
+        'database' => env('TELF_DB_DATABASE', ''),
+        'username' => env('TELF_DB_USERNAME', ''),
+        'password' => env('TELF_DB_PASSWORD', ''),
+        'charset' => 'utf8',
+        'prefix' => '',
+    ],
+
 ],
 
     /*
