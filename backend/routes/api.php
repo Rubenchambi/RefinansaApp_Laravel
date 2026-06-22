@@ -36,6 +36,7 @@ Route::post('/subir-asignacion', [SubirAsignacionesController::class, 'subirAsig
 Route::get('/subir-asignacion/monitor', [SubirAsignacionesController::class, 'monitorAsignacion']);
 
 Route::prefix('predictivo')->group(function () {
+    Route::get('/opciones-filtros', [GenerarPredictivoController::class, 'obtenerOpcionesFiltros']);
     Route::post('/cargar-dnis', [GenerarPredictivoController::class, 'cargarDnis']);
     Route::post('/generar-devalix', [GenerarPredictivoController::class, 'generarDevalix']);
     Route::post('/generar-uncontac', [GenerarPredictivoController::class, 'generarUncontac']);

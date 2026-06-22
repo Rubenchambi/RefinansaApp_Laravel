@@ -4,6 +4,7 @@ import { ref, computed } from 'vue'
 import ListaNegra from './components/ListaNegra.vue'
 import ActualizarRequerimientos from './components/ActualizarRequerimientos.vue'
 import SubirAsignaciones from './components/SubirAsignaciones.vue'
+import GeneradorPredictivo from './components/GeneradorPredictivo.vue'
 
 // Estados de control impecables
 const esHorizontal = ref(false)
@@ -16,7 +17,7 @@ const modulos = [
   { id: 'metropolitana', nombre: '🏢 Metropolitana DXD' },
   { id: 'actualizar_requerimientos', nombre: '⚙️ Requerimientos' },
   { id: 'subir_asignaciones', nombre: '📊 Asignaciones de Carteras' },
-  { id: 'Metas-carteras', nombre: '🎯 Metas de Carteras' }
+  { id: 'Generador_predictivos', nombre: '🎯 Generador de Predictivos' }
 ]
 
 // Buscador en tiempo real
@@ -113,9 +114,13 @@ const modulosFiltrados = computed(() => {
           <div v-else-if="actual === 'actualizar_requerimientos'">
             <ActualizarRequerimientos />
           </div>
-                    <div v-else-if="actual === 'subir_asignaciones'">
+          <div v-else-if="actual === 'subir_asignaciones'">
             <SubirAsignaciones />
           </div>
+          <div v-else-if="actual === 'Generador_predictivos'">
+            <GeneradorPredictivo />
+          </div>
+          
 
           <div v-else class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl p-12 text-center text-slate-500">
             <p class="font-semibold text-sm">Módulo en construcción.</p>
