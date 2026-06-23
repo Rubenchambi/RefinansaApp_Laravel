@@ -335,18 +335,13 @@ onUnmounted(() => window.removeEventListener('click', cerrarDropdownsExterno))
 
 <template>
   <div class="p-6 bg-gray-50 min-h-screen text-gray-800 font-sans">
-    
-    <div class="mb-6">
-      <h2 class="text-2xl font-bold text-gray-900 flex items-center gap-2">🚀 Módulo Generar Predictivo</h2>
-      <p class="text-xs text-gray-500 mt-1">Sube el archivo Excel origen, filtra dinámicamente y exporta carteras.</p>
-    </div>
-
     <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
-      <div class="border-b border-gray-100 pb-5 mb-5">
-        <h4 class="text-xs font-bold text-gray-700 mb-3 uppercase tracking-wider">
+      <div class="border-b border-gray-100 pb-2 mb-5">
+        <h4 class="text-xs font-bold text-gray-700 mb-1 uppercase tracking-wider">
             📁1. Cargar Origen de Datos (Excel)
         </h4>
-        
+         <p class="text-sm text-gray-500 mt-1 py-1">Sube el archivo Excel origen, filtra dinámicamente y exporta su Base de predictivo.</p>
+
         <div class="max-w-4xl space-y-4">
           <div 
             @dragover.prevent="dragover = true" 
@@ -362,7 +357,7 @@ onUnmounted(() => window.removeEventListener('click', cerrarDropdownsExterno))
             </span>
             
             <div>
-              <span class="text-xs font-bold text-slate-700 block">Arrastra tu Cartera Mensual aquí</span>
+              <span class="text-xs font-bold text-slate-700 block">Arrastra su archivo excel aquí</span>
               <span class="text-[11px] text-slate-400 mt-1 block">Soporta formatos .xlsx y .xls masivos</span>
             </div>
 
@@ -379,7 +374,7 @@ onUnmounted(() => window.removeEventListener('click', cerrarDropdownsExterno))
 
           <div class="flex justify-end">
             <button @click="procesarPredictivo" :disabled="cargando || !archivoExcel" class="bg-red-600 hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500 text-white font-bold text-sm px-8 py-2.5 rounded-xl transition-all shadow-md whitespace-nowrap cursor-pointer w-full sm:w-auto">
-              {{ cargando ? '🔄 Buscando...' : '🔍 Procesar Base Seleccionada' }}
+              {{ cargando ? '🔄 Buscando...' : 'Procesar Base Seleccionada' }}
             </button>
           </div>
         </div>
@@ -389,14 +384,14 @@ onUnmounted(() => window.removeEventListener('click', cerrarDropdownsExterno))
         <h4 class="text-xs font-bold text-gray-700 mb-2 uppercase tracking-wider">⚙️ 2. Filtros de Segmentación Cruzada</h4>
         
         <div class="flex flex-row gap-3 w-full">
-          <div v-for="campo in ['operador', 'peso_telefono', 'm_peso', 'ano', 'mes', 'unico']" :key="campo" class="flex-1 min-w-[100px] flex flex-col gap-1 relative">
+          <div v-for="campo in ['operador', 'peso_telefono', 'm_peso', 'ano', 'mes', 'unico']" :key="campo" class="flex-1 min-w-[80px] flex flex-col gap-1 relative">
             <label class="text-xs font-bold text-gray-600 capitalize truncate">{{ campo.replace('_', ' ') }}</label>
             <div class="w-full relative">
               <div @click.stop="toggleDropdown(campo)" :class="['flex justify-between items-center text-xs border rounded-md p-2.5 cursor-pointer select-none shadow-sm', campo === 'm_peso' ? 'border-green-300 bg-green-50 text-green-800 font-semibold':'border-gray-300 bg-white text-gray-700']">
                 <span class="truncate">{{ getSelectedText(filtros[campo], campo) }}</span>
                 <span class="text-[9px] text-gray-400">▼</span>
               </div>
-              <div v-show="dropdowns[campo]" class="absolute z-50 mt-1 left-0 right-0 min-w-[170px] max-h-56 overflow-y-auto bg-white border border-gray-200 rounded-md shadow-xl p-2 flex flex-col gap-1.5">
+              <div v-show="dropdowns[campo]" class="absolute z-50 mt-1 left-0 right-0 min-w-[150px] max-h-56 overflow-y-auto bg-white border border-gray-200 rounded-md shadow-xl p-2 flex flex-col gap-1.5">
                 <label class="flex items-center gap-2 px-2 py-1.5 hover:bg-gray-50 rounded cursor-pointer text-xs font-bold text-gray-900 border-b border-gray-100 pb-2 mb-0.5">
                   <input type="checkbox" v-model="selectAll[campo]" @change="toggleSelectAll(campo)" class="rounded text-red-600 w-3.5 h-3.5">
                   <span>Todos</span>
@@ -411,7 +406,7 @@ onUnmounted(() => window.removeEventListener('click', cerrarDropdownsExterno))
         </div>
 
         <div class="flex flex-row gap-3 w-full">
-          <div v-for="campo in ['cant_predic', 'cant_gest', 'cartera_id', 'planes', 'detalle', 'tipo']" :key="campo" class="flex-1 min-w-[100px] flex flex-col gap-1 relative">
+          <div v-for="campo in ['cant_predic', 'cant_gest', 'cartera_id', 'planes', 'detalle', 'tipo']" :key="campo" class="flex-1 min-w-[80px] flex flex-col gap-1 relative">
             <label class="text-xs font-bold text-gray-600 capitalize truncate">{{ campo.replace('_', ' ') }}</label>
             <div class="w-full relative">
               <div @click.stop="toggleDropdown(campo)" class="flex justify-between items-center text-xs border border-gray-300 text-gray-700 rounded-md p-2.5 cursor-pointer select-none bg-white shadow-sm">
@@ -535,7 +530,7 @@ onUnmounted(() => window.removeEventListener('click', cerrarDropdownsExterno))
           <div v-if="modalConfig.tipo === 'uncontac'" class="pt-2 border-t border-gray-100">
             <label class="text-xs font-bold text-gray-600 block mb-1">🏷️ Nombre Predictivo:</label>
             <input type="text" v-model="modalConfig.nombrePredictivo" class="w-full border border-gray-300 rounded-lg p-2 text-sm font-mono focus:outline-none bg-gray-50">
-            <p class="text-[10px] text-gray-400 mt-1">Prefijo que aparecerá en la columna "cartera" antes del &lt;-</p>
+            <p class="text-[10px] text-gray-400 mt-1">Prefijo que aparecerá en la columna "cartera"</p>
           </div>
         </div>
 
@@ -603,10 +598,10 @@ onUnmounted(() => window.removeEventListener('click', cerrarDropdownsExterno))
         <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider mb-2 flex items-center gap-2">
           <span class="w-1 h-3 bg-blue-600 rounded-full"></span> Detalle (Búsqueda, Origen1, Sistemas, etc.)
         </h4>
-        <div class="space-y-1.5">
+        <div class="space-y-2">
           <div v-for="[detalle, count] in modalResumen.detalle" :key="detalle" class="flex items-center gap-2">
             <span class="text-[10px] font-semibold text-gray-700 w-20 truncate">{{ detalle }}</span>
-            <div class="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+            <div class="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
               <div :style="{ width: (count / modalResumen.totalRegistros * 100) + '%' }" 
                    class="h-full bg-blue-500 rounded-full transition-all duration-500"></div>
             </div>
@@ -625,15 +620,15 @@ onUnmounted(() => window.removeEventListener('click', cerrarDropdownsExterno))
     </div>
 
     <!-- ==================== FOOTER FIJO CON BOTONES ==================== -->
-    <div class="sticky bottom-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 px-6 py-3 rounded-b-2xl flex flex-wrap gap-2 justify-end">
+    <div class="sticky bottom-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 px-6 py-3 rounded-b-1xl flex flex-wrap gap-2 justify-end">
       <!-- Botón Volver a editar -->
       <button @click="modalResumen.mostrar = false; modalConfig.mostrar = true" 
-              class="px-4 py-1.5 text-xs font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-lg cursor-pointer transition-all">
+              class="px-4 py-3 text-sm font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-lg cursor-pointer transition-all">
         ⬅️ Volver a editar
       </button>
       <!-- Botón Descargar -->
       <button @click="descargarArchivoConfirmado" 
-              class="px-6 py-1.5 text-xs font-bold text-white bg-green-600 hover:bg-green-700 rounded-lg shadow-md cursor-pointer transition-all flex items-center gap-1.5">
+              class="px-6 py-3 text-sm font-bold text-white bg-green-600 hover:bg-green-700 rounded-lg shadow-md cursor-pointer transition-all flex items-center gap-1.5">
         📥 Descargar {{ modalResumen.formatoFinal.toUpperCase() }}
       </button>
     </div>
